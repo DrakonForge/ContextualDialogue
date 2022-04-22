@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ContextualDialogue:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ContextualDialogue_jar</output-path>
+    <root id="archive" name="ContextualDialogue.jar">
+      <element id="module-output" name="ContextualDialogue" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/it/unimi/dsi/fastutil/8.5.8/fastutil-8.5.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.9.0/gson-2.9.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
