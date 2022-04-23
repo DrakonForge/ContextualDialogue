@@ -1,22 +1,22 @@
 # Implementation Notes
 
-This document covers some aspects of the technical implementation of this Contextual Dialogue.
+This document covers some aspects of the technical implementation of this library.
 
 ## Table of Contents
 
-  - [JSON Format](#json-format)
-    - [Symbol JSON Format](#symbol-json-format)
-  - [Tokenization and Parsing](#tokenization-and-parsing)
-    - [Symbol Replacement](#symbol-replacement)
+- [JSON Format](#json-format)
+  - [Symbol JSON Format](#symbol-json-format)
+- [Tokenization and Parsing](#tokenization-and-parsing)
+  - [Symbol Replacement](#symbol-replacement)
 
 ## JSON Format
 
-This program creates a speech database using user-provided JSON files. Each **group** should have their own JSON file, which has the format described below. While it is heavily recommended to use [DrakonScript (link pending)]() to write these speechbanks, the JSON format is meant to still be human-interpretable while also maximizing parsing efficiency. It may be useful to know this format if the corresponding DrakonScript files are not available, or if you intend to replace the DrakonScript parser or the Contextual Dialogue implementation with your own version.
+This program creates a speech database using user-provided JSON files. Each **group** should have their own JSON file, which has the format described below. While it is heavily recommended to use [DrakonScript](https://github.com/DrakonForge/DrakonScript) to write these speechbanks, the JSON format is meant to still be human-interpretable while also maximizing parsing efficiency. It may be useful to know this format if the corresponding DrakonScript files are not available, or if you intend to replace the DrakonScript parser or Contextual Dialogue framework with your own version.
 
 The group is named based on the name of the file, so `farmer.json` creates a speechbank for the group `farmer`. The contents of the file are as follows:
 
 * [Object] The root tag.
-  * [String] **parent**: The name of this speechbank's [parent speechbank](#parent-speechbanks).
+  - [String] **parent**: The name of this speechbank's [parent speechbank](https://github.com/DrakonForge/ContextualDialogue/blob/main/README.md#parent-speechbanks).
   * [Array] **symbols**: A list of **[Symbols](#symbol-json-format)** defined for this group and all child groups.
   * [Object] **speechbank**: Data related to the speechbank content.
     * [Array] **\<category name\>**: A unique name given to the category.
@@ -61,7 +61,7 @@ The group is named based on the name of the file, so `farmer.json` creates a spe
 
 ## Tokenization and Parsing
 
-This Contextual Dialogue implementation uses a bespoke **tokenizer** to parse speech lines. This follows efficient tokenization conventions of only needing to read each character in the string **once** without backtracking. This converts a speech line into a **token tree** with a single token (usually a `TokenGroup`) at the root. To generate the speech line, each token is evaluated recursively from the root, passing along the speech query to gain access to context and other information. This tokenization process can be visualized in a linear format using the `--debug` option of the DrakonScript command line tool. For example, the speech line `"@capitalize(@fruits), @fruits, @fruits, @fruits... you name it!"` in the example `fruit_vendor.drkn` is tokenized as the following (expanded for readability):
+This framework uses a bespoke **tokenizer** to parse speech lines. This follows efficient tokenization conventions of only needing to read each character in the string **once** without backtracking. This converts a speech line into a **token tree** with a single token (usually a `TokenGroup`) at the root. To generate the speech line, each token is evaluated recursively from the root, passing along the speech query to gain access to context and other information. This tokenization process can be visualized in a linear format using the `--debug` option of the DrakonScript command line tool. For example, the speech line `"@capitalize(@fruits), @fruits, @fruits, @fruits... you name it!"` in the example `fruit_vendor.drkn` is tokenized as the following (expanded for readability):
 
 ```
 {Function capitalize args=[
@@ -76,7 +76,7 @@ This Contextual Dialogue implementation uses a bespoke **tokenizer** to parse sp
 "... you name it!"
 ```
 
-You can see how the `@fruits` symbol is replaced during tokenization with the value of the symbol (a list of fruits). This works because the system also **parses symbol expressions** into the *same* kind of token tree, allowing for them to replace each other (see [Symbol Replacement](#symbol-replacement-technical) for more details). This speech line is then evaluated token by token, and the results are concatenated to produce the speech line.
+You can see how the `@fruits` symbol is replaced during tokenization with the value of the symbol (a list of fruits). This works because the system also **parses symbol expressions** into the *same* kind of token tree, allowing for them to replace each other (see [Symbol Replacement](#symbol-replacement) for more details). This speech line is then evaluated token by token, and the results are concatenated to produce the speech line.
 
 ## Symbol Replacement
 
@@ -101,7 +101,7 @@ rule B() {
 }
 ```
 
-In rule **A**, the list is declared within the speech line (with `\"` used to escape the quoted string). This is valid using this Contextual Dialogue implementation, and results in a random item from that list being chosen e.g. `My favorite animal is a cat`.
+In rule **A**, the list is declared within the speech line (with `\"` used to escape the quoted string). This is valid in this framework, and results in a random item from that list being chosen e.g. `My favorite animal is a cat`.
 
 In rule **B**, symbol replacement ensures that the token tree of the speech line is **exactly the same** as the line in rule **A**. This means that during **runtime**, both lines have the *same* performance. However, during compile-time, rule **B** is *slightly* slower since it performs a lookup and replacement during **compile-time** to convert the token tree to be identical to rule **A**.
 
@@ -126,4 +126,4 @@ rule D() {
 
 In rule **C**, both speech lines create *their own* versions of the same list, as they have no awareness that another identical list was already created elsewhere. This takes twice as much memory as is needed. In rule **D**, the *same* list is **re-used** in both speech lines. This has identical runtime performance, but is more memory efficient since it is not creating two copies of the same list.
 
-In DrakonScript, symbols also have more flexible syntax to write expressions outside of a speech line, rather than within it. Though you can write expressions with the same meaning both inside and outside the speech line, it is generally more difficult to do this inside a speech line. For example, consider the symbol `@tomorrow = @today + 1` and the speech line `"Tomorrow is day @tomorrow"`, which would return something like `Tomorrow is day three`. If we try to eliminate the symbol, we might try a speech line like `"Tomorrow is day @today + 1"`. However, this is invalid syntax since `+` cannot be used in a speech line to add values (parentheses don't help either). Fortunately, `+` in DrakonScript is just an alias for the [`@add()`](#add) function so we could instead write this as `"Tomorrow is day @add(@today, 1)"`. Although this has the exact same meaning, the syntax is clunkier, especially as expressions get more complex.
+In DrakonScript, symbols also have more flexible syntax to write expressions outside of a speech line, rather than within it. Though you can write expressions with the same meaning both inside and outside the speech line, it is generally more difficult to do this inside a speech line. For example, consider the symbol `@tomorrow = @today + 1` and the speech line `"Tomorrow is day @tomorrow"`, which would return something like `Tomorrow is day three`. If we try to eliminate the symbol, we might try a speech line like `"Tomorrow is day @today + 1"`. However, this is invalid syntax since `+` cannot be used in a speech line to add values (parentheses don't help either). Fortunately, `+` in DrakonScript is just an alias for the [`@add()`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#add) function so we could instead write this as `"Tomorrow is day @add(@today, 1)"`. Although this has the exact same meaning, the syntax is clunkier, especially as expressions get more complex.
