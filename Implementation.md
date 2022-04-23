@@ -40,6 +40,7 @@ The group is named based on the name of the file, so `farmer.json` creates a spe
         * [String] **lines**: A named rule that this rule should borrow its lines from.
 
 \* **Possible values**: `equals`, `dummy`, `fail`, `range`, `min`, `max`, `exists`, `includes`, `empty`, `equals_dynamic`, `less_then_dynamic`, `less_equal_dynamic`, `greater_than_dynamic`, `greater_equal_dynamic`
+
 \*\* **Possible values**: `add`, `mult`, `remove`, `invert`, `set_list`, `set_static`, `set_dynamic`
 
 ### Symbol JSON Format
