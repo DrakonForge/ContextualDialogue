@@ -90,13 +90,13 @@ Any number, including both whole numbers and numbers with decimal points, such a
 
 A sequence of **items** of any data type, enclosed in square brackets and separated by commas, e.g. `["a", "b", "c"]`. Items do not have to be the same data type, and can also include [placeholder types](#placeholder-data-types) as well as nested lists.
 
-When printed, a randomly selected item from the list is chosen. If the same list is printed multiple times in the same speech line, it samples **without replacement**. This also records a **list choice**, which can be accessed by the [`@prev()`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#prev) and [`@prev_match`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#prev_match).
+When printed, a randomly selected item from the list is chosen. If the same list is printed multiple times in the same speech line, it samples **without replacement**. This also records a **list choice**, which can be accessed by the [`@prev()`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#prev) and [`@prev_match()`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#prev_match).
 
 Lists can only be printed if they contain only **Integers** or **Strings**, as that is what is supported by context and useful for most speech lines. However, it is possible to make lists containing the other data types for other purposes.
 
 #### Boolean
 
-Either `true` or `false`. The speech line fails to generate when attempting to print these; however, functions such as [`if_else`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#if_else) can be used, e.g. `@if_else(true, "yes", "no")` -> `yes`.
+Either `true` or `false`. The speech line fails to generate when attempting to print these; however, functions such as [`@if_else()`](https://github.com/DrakonForge/ContextualDialogue/blob/main/Functions.md#if_else) can be used, e.g. `@if_else(true, "yes", "no")` -> `yes`.
 
 ### Placeholder Data Types
 
