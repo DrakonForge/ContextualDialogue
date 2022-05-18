@@ -81,6 +81,8 @@ public final class Tokenizer {
 
         if(tokens.isEmpty()) {
             throw new TokenizeException("Speech line should not be empty");
+        } else if(tokens.size() == 1) {
+            return tokens.get(0);
         }
         return new TokenGroup(tokens);
     }
