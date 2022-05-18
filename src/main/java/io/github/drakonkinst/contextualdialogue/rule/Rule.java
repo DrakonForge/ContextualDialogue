@@ -1,8 +1,10 @@
 package io.github.drakonkinst.contextualdialogue.rule;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class Rule implements Serializable {
     public static Rule EMPTY = new Rule(new CriterionTuple[0], 0);
@@ -44,47 +46,32 @@ public class Rule implements Serializable {
 
     // Builder class to make construction of Rules easier.
     public static class Builder {
-        private final CriterionTuple[] criteria;
-        private int currentIndex = -1;
+        private final List<CriterionTuple> criteria;
+        private int priorityBonus = 0;
 
         private Builder(final int size) {
-            this.criteria = new CriterionTuple[size];
+            this.criteria = new ArrayList<>(size);
         }
 
         public Builder add(final CriterionTuple tuple) {
-            ++currentIndex;
-            if(currentIndex >= criteria.length) {
-                throw new IllegalStateException("Error: Rule is limited to " + criteria.length + " items!");
+            if(tuple.getCriterion() instanceof CriterionDummy criterionDummy) {
+                priorityBonus += criterionDummy.getValue();
+            } else {
+                criteria.add(tuple);
             }
-
-            criteria[currentIndex] = tuple;
             return this;
         }
 
-        private void sortDictionary() {
-            Arrays.sort(criteria, Collections.reverseOrder());
-        }
-
-        private int calculatePriority() {
-            int priority = criteria.length;
-
-            for(final CriterionTuple criterionTuple : criteria) {
-                if (criterionTuple.getCriterion() instanceof CriterionDummy criterionDummy) {
-                    // Minus one so we don't count dummy as its own criteria
-                    priority += criterionDummy.getValue() - 1;
-                }
-            }
-
-            return priority;
-        }
-
         public Rule build() {
-            if(currentIndex < criteria.length - 1) {
-                throw new IllegalStateException("Error: Dictionary must have exactly " + criteria.length + " items!");
-            }
-            sortDictionary();
+            // Priority is number of criteria + dummy bonuses
+            int priority = criteria.size() + priorityBonus;
 
-            return new Rule(criteria, calculatePriority());
+            // Sort criteria and convert to array
+            CriterionTuple[] criteriaArr = new CriterionTuple[criteria.size()];
+            criteria.toArray(criteriaArr);
+            Arrays.sort(criteriaArr, Collections.reverseOrder());
+
+            return new Rule(criteriaArr, priority);
         }
     }
 

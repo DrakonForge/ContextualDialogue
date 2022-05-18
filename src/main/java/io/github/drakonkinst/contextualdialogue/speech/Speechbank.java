@@ -39,8 +39,6 @@ public class Speechbank implements Serializable {
 
         if(criterion instanceof CriterionFail criterionFail) {
             return criterionFail.evaluate();
-        } else if(criterion instanceof CriterionDummy criterionDummy) {
-            return criterionDummy.evaluate();
         } else if(criterion instanceof CriterionDynamic criterionDynamic) {
             return criterionDynamic.evaluate(key, table, contexts);
         } else if(criterion instanceof CriterionExist criterionExist) {

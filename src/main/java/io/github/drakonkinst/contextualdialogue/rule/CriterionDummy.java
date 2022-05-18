@@ -1,7 +1,5 @@
 package io.github.drakonkinst.contextualdialogue.rule;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
-
 public class CriterionDummy implements Criterion {
     private final int value;
 
@@ -11,11 +9,6 @@ public class CriterionDummy implements Criterion {
 
     private CriterionDummy(final int value) {
         this.value = value;
-    }
-
-    public boolean evaluate() {
-        MyLogger.finest("PASS: Dummy criterion always succeeds");
-        return true;
     }
 
     public int getValue() {
