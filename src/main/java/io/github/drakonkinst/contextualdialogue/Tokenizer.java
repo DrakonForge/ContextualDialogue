@@ -99,8 +99,6 @@ public final class Tokenizer {
             } else if(c == FORMAT_START) {
                 finishStringToken(sb, tokens);
                 index = tokenizeFormat(text, index, tokens);
-                // TODO implement
-                // TODO: Prevent use of pause, linebreak, bold, or italics attributes
             } else if(c == STAR) {
                 finishStringToken(sb, tokens);
                 ++numStars;

@@ -29,7 +29,7 @@ public class SpeechbankDatabase implements Serializable {
         this.groupToSpeechbankMap = groupToSpeechbankMap;
     }
 
-    public String generateLine(String group, String category, SpeechQuery speechQuery) {
+    public SpeechResult generateLine(String group, String category, SpeechQuery speechQuery) {
         Speechbank speechbank = groupToSpeechbankMap.get(group);
         if(speechbank == null) {
             MyLogger.severe("Speechbank for group \"" + group + "\" does not exist!");
@@ -47,7 +47,7 @@ public class SpeechbankDatabase implements Serializable {
         }
 
         chosenEntry.performActions(speechQuery.getContexts());
-        String generatedLine = chosenEntry.generateLine(speechQuery);
+        SpeechResult generatedLine = chosenEntry.generateLine(speechQuery);
         if(generatedLine == null && parent != null) {
             return generateLine(parent, category, speechQuery);
         }

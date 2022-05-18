@@ -315,7 +315,7 @@ public final class SpeechbankParser {
         // Read lines
         TokenGroup[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries);
 
-        // Todo: Actions
+        // Read actions
         JsonElement actionsEl = obj.get("actions");
         Action[] actions = null;
         if(actionsEl != null) {

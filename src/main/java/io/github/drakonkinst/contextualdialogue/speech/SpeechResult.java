@@ -6,16 +6,20 @@ import io.github.drakonkinst.contextualdialogue.speech.text.TextToken;
 import java.util.List;
 
 public class SpeechResult {
-    private final List<TextToken> text;
+    private final List<TextToken> textTokens;
     private final int priority;
 
-    public SpeechResult(List<TextToken> text, int priority) {
-        this.text = text;
+    public SpeechResult(List<TextToken> textTokens, int priority) {
+        this.textTokens = textTokens;
         this.priority = priority;
     }
 
-    public List<TextToken> getText() {
-        return text;
+    public String getText() {
+        return toString();
+    }
+
+    public List<TextToken> getTextTokens() {
+        return textTokens;
     }
 
     public int getPriority() {
@@ -25,7 +29,7 @@ public class SpeechResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (TextToken token : text) {
+        for (TextToken token : textTokens) {
             if (token instanceof TextLiteral literal) {
                 sb.append(literal);
             }

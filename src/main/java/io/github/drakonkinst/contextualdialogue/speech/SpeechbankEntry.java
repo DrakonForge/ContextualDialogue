@@ -22,8 +22,6 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
     private static final int MAX_ATTEMPTS = 3;
 
     private final Rule rule;
-    // TODO: Isn't this always a token group w no other use of TokenGroup?
-    // Maybe if this is a list of SpeechResult(?)[] each consisting of a list of tokens or
     private final TokenGroup[] speechLines;    // Each token represents a speech line
     private final Action[] actions;
 
@@ -33,14 +31,13 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
         this.actions = actions;
     }
 
-    // TODO: This should return a <string, int> tuple instead
-    public String generateLine(SpeechQuery query) {
+    public SpeechResult generateLine(SpeechQuery query) {
         int attempts = 0;
 
         do {
             try {
-                Token speechLine = chooseRandomSpeechLine();
-                return speechLine.evaluate(query);
+                TokenGroup speechLine = chooseRandomSpeechLine();
+                return new SpeechResult(speechLine.toTextTokens(query), rule.getPriority());
             } catch(SpeechException e) {
                 MyLogger.getLogger().log(Level.FINE, "Speech line failed to generate: " + e.getMessage(), e);
             }
@@ -58,7 +55,7 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
         }
     }
 
-    private Token chooseRandomSpeechLine() throws SpeechException {
+    private TokenGroup chooseRandomSpeechLine() throws SpeechException {
         if(speechLines == null || speechLines.length <= 0) {
             throw new SpeechException("This entry has no speech lines!");
         }

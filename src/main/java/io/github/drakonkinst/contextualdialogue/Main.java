@@ -55,7 +55,7 @@ public class Main {
         start = System.currentTimeMillis();
         for(int i = 0; i < howMany; ++i) {
             SpeechQuery query = new SpeechQuery(contexts, SymbolChecker.functionLookup);
-            String generatedLine = database.generateLine(group, category, query);
+            String generatedLine = database.generateLine(group, category, query).getText();
 
             if(printLines) {
                 MyLogger.info(generatedLine);
