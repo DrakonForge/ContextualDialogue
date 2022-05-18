@@ -76,6 +76,9 @@ public class Speechbank implements Serializable {
         List<SpeechbankEntry> candidates = new ArrayList<>();
         int highestMatchingPriority = -999;
         for(SpeechbankEntry entry : entries) {
+            if(entry.isEmpty()) {
+                continue;
+            }
             Rule rule = entry.getRule();
             int priority = rule.getPriority();
             if(priority < highestMatchingPriority) {

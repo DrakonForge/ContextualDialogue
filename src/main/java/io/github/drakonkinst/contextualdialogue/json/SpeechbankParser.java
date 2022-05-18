@@ -294,6 +294,8 @@ public final class SpeechbankParser {
                                                     JsonObject obj,
                                                     Map<String, Token> parentSymbols,
                                                     List<NamedEntry> namedEntries) {
+        boolean empty = true;
+
         // Read symbols
         Map<String, Token> symbols = parseSymbols(obj.get("symbols"), parentSymbols);
 
@@ -314,15 +316,21 @@ public final class SpeechbankParser {
 
         // Read lines
         TokenGroup[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries);
+        if(speechLines != null && speechLines.length > 0) {
+            empty = false;
+        }
 
         // Read actions
         JsonElement actionsEl = obj.get("actions");
         Action[] actions = null;
         if(actionsEl != null) {
             actions = ActionParser.parseActions(actionsEl.getAsJsonArray());
+            if(actions.length > 0) {
+                empty = false;
+            }
         }
 
-        SpeechbankEntry entry = new SpeechbankEntry(rule, speechLines, actions);
+        SpeechbankEntry entry = new SpeechbankEntry(rule, speechLines, actions, empty);
 
         // Read name
         checkNamedRule(obj.get("name"), entry, categoryName, namedEntries);

@@ -24,11 +24,13 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
     private final Rule rule;
     private final TokenGroup[] speechLines;    // Each token represents a speech line
     private final Action[] actions;
+    private final boolean empty;
 
-    public SpeechbankEntry(Rule rule, TokenGroup[] speechLines, Action[] actions) {
+    public SpeechbankEntry(Rule rule, TokenGroup[] speechLines, Action[] actions, boolean empty) {
         this.rule = rule;
         this.speechLines = speechLines;
         this.actions = actions;
+        this.empty = empty;
     }
 
     public SpeechResult generateLine(SpeechQuery query) {
@@ -68,6 +70,10 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
 
     public TokenGroup[] getSpeechLines() {
         return speechLines;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     @Override
