@@ -17,6 +17,7 @@ import io.github.drakonkinst.contextualdialogue.rule.Rule;
 import io.github.drakonkinst.contextualdialogue.speech.Speechbank;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechbankEntry;
 import io.github.drakonkinst.contextualdialogue.token.Token;
+import io.github.drakonkinst.contextualdialogue.token.TokenGroup;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -312,7 +313,7 @@ public final class SpeechbankParser {
         Rule rule = CriteriaParser.parseRule(criteriaArr, presetRules);
 
         // Read lines
-        Token[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries);
+        TokenGroup[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries);
 
         // Todo: Actions
         JsonElement actionsEl = obj.get("actions");
@@ -346,7 +347,7 @@ public final class SpeechbankParser {
         return presetRules;
     }
 
-    private static Token[] checkSpeechLinesType(JsonElement linesEl,
+    private static TokenGroup[] checkSpeechLinesType(JsonElement linesEl,
                                                 Map<String, Token> symbols,
                                                 List<NamedEntry> namedEntries) {
         if(linesEl != null) {
@@ -374,19 +375,19 @@ public final class SpeechbankParser {
         return null;
     }
 
-    private static Token[] parseSpeechLines(JsonArray arr, Map<String, Token> symbols) {
-        Token[] tokens = new Token[arr.size()];
+    private static TokenGroup[] parseSpeechLines(JsonArray arr, Map<String, Token> symbols) {
+        TokenGroup[] tokens = new TokenGroup[arr.size()];
         for(int i = 0; i < arr.size(); ++i) {
             String speechLine = arr.get(i).getAsString();
             try {
-                Token token = Tokenizer.tokenize(speechLine);
+                TokenGroup token = Tokenizer.tokenize(speechLine);
                 SymbolChecker.test(token, symbols);
                 MyLogger.finest("Tokenization:" + token);
                 tokens[i] = token;
             } catch(TokenizeException e) {
-                throw new JsonParseException("Tokenization error: " + e.getMessage(), e);
+                throw new JsonParseException("Tokenization error for \"" + speechLine + "\"\n" + e.getMessage(), e);
             } catch(SymbolException e) {
-                throw new JsonParseException("Symbol error: " + e.getMessage(), e);
+                throw new JsonParseException("Symbol error for \"" + speechLine + "\"\n" + e.getMessage(), e);
             }
         }
         return tokens;

@@ -20,11 +20,11 @@ import java.util.logging.Level;
 
 public class Tester {
     public static void main(String[] args) throws TokenizeException, SymbolException, SpeechException {
-        MyLogger.initialize(Level.ALL);
+        MyLogger.initialize(Level.FINE);
 
         String complex1 = "Hey @name! Go see the farmer in town, #structure.farmer! @capitalize(@subjective(#structure.farmer.gender))'s got a sale going right now!";
         String complex2 = "I see @count(@numbers) @pluralize(@count(@numbers), \"light\", \"lights\")!";
-        ///*
+        /*
         testLine("Hello #name, I'm #speaker.name.");
         testLine(complex1);
         testLine("Your name in lowercase is @decapitalize(@name)");
@@ -36,7 +36,10 @@ public class Tester {
         testLine("Hello! I'm turning #age today!");
         testLine("Hello there! / General Kenobi!");
         testLine("@concat(#age, #age)");
+        testLine("Hi there, what's your name?");
         //*/
+
+        testLine("**hi{b=falsea dsdad}**");
 
         /*
         int howManyTokenize = 100000;

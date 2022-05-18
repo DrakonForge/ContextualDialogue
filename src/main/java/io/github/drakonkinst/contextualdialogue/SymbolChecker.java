@@ -38,7 +38,7 @@ public class SymbolChecker {
         } else if(token instanceof TokenSymbol symbol) {
             // Must be a predefined symbol if it is not replaced
             // We don't support those yet
-            throw new SymbolException("Symbol was not replaced");
+            throw new SymbolException("Symbol " + symbol.getName() + " was not replaced");
         } else if(token instanceof TokenFunction function) {
             FunctionSig sig = functionLookup.getFunctionSig(function.getName());
             if(sig == null) {

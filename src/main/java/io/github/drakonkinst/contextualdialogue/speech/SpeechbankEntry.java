@@ -7,6 +7,7 @@ import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.rule.Rule;
 import io.github.drakonkinst.contextualdialogue.token.Token;
+import io.github.drakonkinst.contextualdialogue.token.TokenGroup;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -21,15 +22,18 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
     private static final int MAX_ATTEMPTS = 3;
 
     private final Rule rule;
-    private final Token[] speechLines;    // Each token represents a speech line
+    // TODO: Isn't this always a token group w no other use of TokenGroup?
+    // Maybe if this is a list of SpeechResult(?)[] each consisting of a list of tokens or
+    private final TokenGroup[] speechLines;    // Each token represents a speech line
     private final Action[] actions;
 
-    public SpeechbankEntry(Rule rule, Token[] speechLines, Action[] actions) {
+    public SpeechbankEntry(Rule rule, TokenGroup[] speechLines, Action[] actions) {
         this.rule = rule;
         this.speechLines = speechLines;
         this.actions = actions;
     }
 
+    // TODO: This should return a <string, int> tuple instead
     public String generateLine(SpeechQuery query) {
         int attempts = 0;
 
@@ -65,7 +69,7 @@ public class SpeechbankEntry implements Comparable<SpeechbankEntry>, Serializabl
         return rule;
     }
 
-    public Token[] getSpeechLines() {
+    public TokenGroup[] getSpeechLines() {
         return speechLines;
     }
 
