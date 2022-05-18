@@ -11,7 +11,6 @@ import io.github.drakonkinst.contextualdialogue.token.TokenContext;
 import io.github.drakonkinst.contextualdialogue.token.TokenInt;
 import io.github.drakonkinst.contextualdialogue.token.TokenList;
 import io.github.drakonkinst.contextualdialogue.token.TokenString;
-import io.github.drakonkinst.contextualdialogue.util.NumericalSpeech;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,8 @@ public class Tester {
         testLine("Hi there, what's your name?");
         //*/
 
-        testLine("**hi{b=falsea dsdad}**");
+        testLine("@upper(hi\\, how are you)");
+        testLine("This must be the @ord(3) time we've met!");
 
         /*
         int howManyTokenize = 100000;
@@ -49,7 +49,7 @@ public class Tester {
         int howManyGenerate = 10000;
         testGenerateLarge(complex1, howManyGenerate);
         testGenerateLarge(complex2, howManyGenerate);
-        */
+        //*/
     }
 
     private static Map<String, Token> getTestSymbols() {

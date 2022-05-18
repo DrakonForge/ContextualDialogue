@@ -45,6 +45,8 @@ public class FunctionLookup {
         defineFunction("mod", TokenInt.class, TokenTypes.INTEGER, TokenTypes.INTEGER);
         defineFunction("to_int", TokenInt.class, TokenTypes.NUMBER);
         defineFunction("rand_int", TokenInt.class, TokenTypes.INTEGER);
+        defineFunction("num", TokenString.class, TokenTypes.INTEGER);
+        defineFunction("ord", TokenString.class, TokenTypes.INTEGER);
         defineFunction("gender", TokenString.class, TokenTypes.STRING, TokenTypes.STRING, TokenTypes.STRING, TokenTypes.STRING);
         defineFunction("if_else", TokenString.class, TokenTypes.BOOLEAN, TokenTypes.STRING, TokenTypes.STRING);
         defineFunction("not", TokenBoolean.class, TokenTypes.BOOLEAN);

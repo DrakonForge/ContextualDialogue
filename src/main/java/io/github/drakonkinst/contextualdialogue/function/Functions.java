@@ -3,6 +3,7 @@ package io.github.drakonkinst.contextualdialogue.function;
 import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
+import io.github.drakonkinst.contextualdialogue.util.NumericalSpeech;
 import io.github.drakonkinst.contextualdialogue.util.StringCache;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -165,6 +166,14 @@ public final class Functions {
 
     public static int toInt(float number) {
         return (int) number;
+    }
+
+    public static String num(int num) throws SpeechException {
+        return NumericalSpeech.integerToWord(num);
+    }
+
+    public static String ord(int num) throws SpeechException {
+        return NumericalSpeech.integerToOrdinal(num);
     }
 
     public static String gender(String gender, String maleStr, String femaleStr, String neutralStr) throws SpeechException {
