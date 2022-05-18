@@ -20,10 +20,9 @@ public final class Tokenizer {
     
     private static final char SYMBOL_START = '@';
     private static final char CONTEXT_START = '#';
-    private static final char LIST_START = '[';
-    private static final char LIST_END = ']';
     private static final char ARGS_START = '(';
     private static final char ARGS_END = ')';
+    private static final char ARGS_SEP = ',';
     private static final char TABLE_SEP = '.';
     private static final char PAUSE = '_';
     private static final char ENDLINE = '/';
@@ -67,14 +66,6 @@ public final class Tokenizer {
                 finishStringToken(sb, tokens);
                 sb = new StringBuilder();
                 index = tokenizeContext(text, index, tokens);
-            } else if(c == LIST_START) {
-                finishStringToken(sb, tokens);
-                sb = new StringBuilder();
-                Ref<TokenList> tokenRef = new Ref<>();
-                index = tokenizeList(text, index, tokenRef, LIST_END);
-                if(tokenRef.exists()) {
-                    tokens.add(tokenRef.get());
-                }
             } else {
                 sb.append(c);
                 ++index;
@@ -168,7 +159,7 @@ public final class Tokenizer {
                 
                 // Read arguments
                 Ref<TokenList> tokenRef = new Ref<>();
-                int nextIndex = tokenizeList(text, i, tokenRef, ARGS_END);
+                int nextIndex = tokenizeArgs(text, i, tokenRef);
                 TokenList args = tokenRef.get();
                 
                 // Create token
@@ -187,19 +178,19 @@ public final class Tokenizer {
         return i;
     }
     
-    private static int tokenizeList(String text, int index, Ref<TokenList> tokenRef, char endChar) throws TokenizeException {
+    private static int tokenizeArgs(String text, int index, Ref<TokenList> tokenRef) throws TokenizeException {
         List<Token> tokens = new ArrayList<>();
         boolean finishedItem = false;
         index += 1;
         while(index < text.length()) {
             char currentChar = text.charAt(index);
-            if (currentChar == endChar) {
+            if (currentChar == Tokenizer.ARGS_END) {
                 tokenRef.set(new TokenList(tokens));
                 return index + 1;
             }
             if (finishedItem) {
                 // Expect comma or end of list
-                if(currentChar == ',') { 
+                if(currentChar == ARGS_SEP) {
                     finishedItem = false;
                     ++index;
                 } else {
@@ -211,26 +202,21 @@ public final class Tokenizer {
             } else if(currentChar == SYMBOL_START) {
                 index = tokenizeSymbol(text, index, tokens);
                 finishedItem = true;
-            } else if (Character.isDigit(currentChar) || currentChar == '-') {
+            } else if (Character.isDigit(currentChar)
+                    // 1-char lookahead needed to differentiate between "-" and the start of a negative number
+                    || (currentChar == '-' && index < text.length() - 1 && Character.isDigit(text.charAt(index + 1)))) {
                 index = tokenizeNumber(text, index, tokens);
                 finishedItem = true;
-            } else if (currentChar == '"') {
-                index = tokenizeString(text, index, tokens);
-                finishedItem = true;
-            } else if (currentChar == LIST_START) {
-                Ref<TokenList> innerList = new Ref<>();
-                index = tokenizeList(text, index, innerList, LIST_END);
-                if(innerList.exists()) {
-                    tokens.add(innerList.get());
-                }
             } else if (currentChar == SPACE) {
                 ++index;
             } else {
-                throw new TokenizeException("Unexpected character in function arguments '" + currentChar + "'");
+                // Assume it is a string
+                index = tokenizeString(text, index, tokens);
+                finishedItem = true;
             }
         }
         
-        throw new TokenizeException("Unfinished list, never encountered '" + endChar + "'");
+        throw new TokenizeException("Unfinished list, never encountered '" + Tokenizer.ARGS_END + "'");
     }
     
     private static int tokenizeNumber(String text, int index, List<Token> tokens) throws TokenizeException {
@@ -275,7 +261,7 @@ public final class Tokenizer {
     
     private static int tokenizeString(String text, int index, List<Token> tokens) throws TokenizeException {
         StringBuilder sb = new StringBuilder();
-        for (int i = index + 1; i < text.length(); ++i) {
+        for (int i = index; i < text.length(); ++i) {
             char currentChar = text.charAt(i);
 
             if (currentChar == '\\') {
@@ -283,9 +269,9 @@ public final class Tokenizer {
                     throw new TokenizeException("Invalid use of backslash character");
                 }
                 sb.append(text.charAt(++i));
-            } else if (currentChar == '"') {
+            } else if (currentChar == ARGS_SEP || currentChar == ARGS_END) {
                 tokens.add(new TokenString(sb.toString()));
-                return i + 1;
+                return i;
             } else {
                 sb.append(currentChar);
             }

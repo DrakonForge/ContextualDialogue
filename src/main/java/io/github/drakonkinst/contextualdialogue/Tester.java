@@ -28,12 +28,11 @@ public class Tester {
         testLine("Hello #name, I'm #speaker.name.");
         testLine(complex1);
         testLine("Your name in lowercase is @decapitalize(@name)");
-        testLine("I see @count([1, 2, 3, 4, 5]) lights!");
         testLine(complex2);
         testLine("Would you like some @fruits, @fruits, or @fruits today? The @fruits are on sale!");
         testLine("@capitalize(@fruits) or @fruits? I'm a fan of @prev(1) personally.");
         testLine("Everyone knows counting goes @numbers, @numbers, @numbers, @numbers, @numbers!");
-        testLine("My favorite color is [\"blue\", \"red\", \"yellow\"]");
+        testLine("My favorite color is @upper(blue!)");
         testLine("Hello! I'm turning #age today!");
         testLine("Hello there! / General Kenobi!");
         testLine("@concat(#age, #age)");
