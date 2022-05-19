@@ -51,11 +51,11 @@ public class Speechbank implements Serializable {
     private static SpeechbankEntry pickRandomEntry(List<SpeechbankEntry> options) {
         if(options.size() == 0) {
             return null;
-        } else if(options.size() == 1) {
-            return options.get(0);
-        } else {
-            return options.get(FastMath.randInt(options.size()));
         }
+        if(options.size() == 1) {
+            return options.get(0);
+        }
+        return options.get(FastMath.randInt(options.size()));
     }
 
     private final String parent;

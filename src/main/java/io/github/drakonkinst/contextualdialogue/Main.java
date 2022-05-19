@@ -5,9 +5,12 @@ import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.json.ContextParser;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
+import io.github.drakonkinst.contextualdialogue.speech.SpeechResult;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechbankDatabase;
+import io.github.drakonkinst.contextualdialogue.speech.text.TextToken;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -26,6 +29,7 @@ public class Main {
         int howMany = Integer.parseInt(args[4]);
         boolean verbose = Boolean.parseBoolean(args[5]);
         boolean printLines = Boolean.parseBoolean(args[6]);
+        boolean tokenize = Boolean.parseBoolean(args[7]);
 
         if(verbose) {
             MyLogger.initialize(Level.FINEST);
@@ -55,14 +59,26 @@ public class Main {
         start = System.currentTimeMillis();
         for(int i = 0; i < howMany; ++i) {
             SpeechQuery query = new SpeechQuery(contexts, SymbolChecker.functionLookup);
-            String generatedLine = database.generateLine(group, category, query).getText();
+            SpeechResult result = database.generateLine(group, category, query);
 
             if(printLines) {
-                MyLogger.info(generatedLine);
+                if(tokenize) {
+                    MyLogger.info(tokensToString(result.getTextTokens()));
+                } else {
+                    MyLogger.info(result.getText());
+                }
             }
         }
         end = System.currentTimeMillis();
         MyLogger.info();
         MyLogger.info("Took " + (end - start) + "ms to generate " + howMany + " speech lines");
+    }
+
+    private static String tokensToString(List<TextToken> tokens) {
+        StringBuilder sb = new StringBuilder();
+        for(TextToken token : tokens) {
+            sb.append(token.toString());
+        }
+        return sb.toString();
     }
 }

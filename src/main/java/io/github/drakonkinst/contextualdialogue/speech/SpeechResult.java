@@ -31,7 +31,7 @@ public class SpeechResult {
         StringBuilder sb = new StringBuilder();
         for (TextToken token : textTokens) {
             if (token instanceof TextLiteral literal) {
-                sb.append(literal);
+                sb.append(literal.getText());
             }
         }
         return sb.toString();
