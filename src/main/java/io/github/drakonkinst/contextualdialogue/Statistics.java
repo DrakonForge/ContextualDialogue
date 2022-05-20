@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class Statistics {
+    private Statistics() {}
+
     public static long countNumVariations(Token token) {
         long variations = 1;
         if(token instanceof TokenGroup tokenGroup) {

@@ -62,7 +62,11 @@ public class FunctionLookup {
         defineFunction(Functions.class, name, returnType, varArgs, usesQuery, argTypes);
     }
 
-    protected void defineFunction(Class<?> functionClass, String name, Class<? extends Token> returnType, boolean varArgs, boolean usesQuery, TokenTypes[] argTypes) {
+    protected void defineFunction(Class<?> functionClass, String name, Class<? extends Token> returnType, TokenTypes... argTypes) {
+        defineFunction(functionClass, name, returnType, false, false, argTypes);
+    }
+
+    protected void defineFunction(Class<?> functionClass, String name, Class<? extends Token> returnType, boolean varArgs, boolean usesQuery, TokenTypes... argTypes) {
         if(varArgs && usesQuery) {
             throw new IllegalArgumentException("Function cannot pass both varargs and query");
         }
