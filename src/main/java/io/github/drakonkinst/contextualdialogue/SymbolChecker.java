@@ -1,6 +1,5 @@
 package io.github.drakonkinst.contextualdialogue;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.exception.SymbolException;
 import io.github.drakonkinst.contextualdialogue.function.FunctionLookup;
 import io.github.drakonkinst.contextualdialogue.function.FunctionSig;

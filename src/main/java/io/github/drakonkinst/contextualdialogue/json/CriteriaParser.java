@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import io.github.drakonkinst.contextualdialogue.commonutil.JsonUtils;
+import io.github.drakonkinst.commonutil.JsonUtils;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.rule.Criterion;
 import io.github.drakonkinst.contextualdialogue.rule.CriterionDummy;

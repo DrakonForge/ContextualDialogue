@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.Ref;
+import io.github.drakonkinst.commonutil.Ref;
 import io.github.drakonkinst.contextualdialogue.exception.TokenizeException;
 import io.github.drakonkinst.contextualdialogue.speech.text.TextFormat;
 import io.github.drakonkinst.contextualdialogue.speech.text.TextFormatBool;
@@ -82,13 +82,15 @@ public final class Tokenizer {
                 if(sb.isEmpty()) {
                     throw new TokenizeException("Line break should not separate blank lines");
                 }
-                sb.append(TextFormat.LINEBREAK);
+                finishStringToken(sb, tokens);
+                tokens.add(TextFormat.LINEBREAK);
                 consumeSpaces = true;
                 ++index;
             } else if(c == PAUSE) {
                 if(!sb.isEmpty() && sb.charAt(sb.length() - 1) == SPACE) {
                     throw new TokenizeException("Spaces should not precede a pause");
                 }
+                finishStringToken(sb, tokens);
                 index = tokenizePause(text, index, tokens);
             } else if(c == SYMBOL_START) {
                 finishStringToken(sb, tokens);

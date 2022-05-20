@@ -1,7 +1,7 @@
 package io.github.drakonkinst.contextualdialogue.util;
 
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;

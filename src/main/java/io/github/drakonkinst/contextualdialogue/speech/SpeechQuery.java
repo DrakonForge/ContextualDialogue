@@ -1,7 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.speech;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.FastMath;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.context.FactType;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SpeechQuery {
-    private static final String[] DEFAULT_TABLES = { "listener", "speaker", "location", "structure", "region", "world" };
+    private static final String[] DEFAULT_TABLES = { "event", "listener", "speaker", "location", "structure", "region", "world" };
     private static final int MAX_ATTEMPTS = 5;
     private static final IntSet EMPTY_SET = new IntOpenHashSet();
 

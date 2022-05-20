@@ -1,7 +1,7 @@
 package io.github.drakonkinst.contextualdialogue.speech;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.FastMath;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.rule.Criterion;
 import io.github.drakonkinst.contextualdialogue.rule.CriterionDynamic;
@@ -19,23 +19,23 @@ import java.util.Map;
 
 public class Speechbank implements Serializable {
 
-    private static boolean match(Rule rule, Map<String, ContextTable> contexts) {
+    public static boolean match(Rule rule, Map<String, ContextTable> contexts, boolean skipFailCriteria) {
         int numCriteria = rule.getSize();
         for(int i = 0; i < numCriteria; ++i) {
-            if(!evaluateCriterion(rule.getTupleAt(i), contexts)) {
+            if(!evaluateCriterion(rule.getTupleAt(i), contexts, skipFailCriteria)) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean evaluateCriterion(CriterionTuple info, Map<String, ContextTable> contexts) {
+    private static boolean evaluateCriterion(CriterionTuple info, Map<String, ContextTable> contexts, boolean skipFailCriteria) {
         String key = info.getKey();
         String table = info.getTable();
         Criterion criterion = info.getCriterion();
 
         if(criterion instanceof CriterionFail criterionFail) {
-            return criterionFail.evaluate();
+            return skipFailCriteria || criterionFail.evaluate();
         } else if(criterion instanceof CriterionDynamic criterionDynamic) {
             return criterionDynamic.evaluate(key, table, contexts);
         } else if(criterion instanceof CriterionExist criterionExist) {
@@ -86,7 +86,7 @@ public class Speechbank implements Serializable {
             }
 
             MyLogger.finest("Checking " + rule);
-            if(match(rule, contexts)) {
+            if(match(rule, contexts, false)) {
                 if(priority > highestMatchingPriority) {
                     highestMatchingPriority = priority;
                     candidates.clear();
@@ -96,6 +96,10 @@ public class Speechbank implements Serializable {
             }
         }
         return pickRandomEntry(candidates);
+    }
+
+    public SpeechbankEntry[] getEntriesFor(String category) {
+        return categoryToEntryMap.get(category);
     }
 
     public String getParent() {

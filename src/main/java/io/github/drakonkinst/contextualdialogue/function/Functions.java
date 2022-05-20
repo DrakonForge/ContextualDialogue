@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.function;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
+import io.github.drakonkinst.commonutil.FastMath;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
 import io.github.drakonkinst.contextualdialogue.util.NumericalSpeech;

@@ -12,7 +12,7 @@ import io.github.drakonkinst.contextualdialogue.action.RemoveAction;
 import io.github.drakonkinst.contextualdialogue.action.SetDynamicAction;
 import io.github.drakonkinst.contextualdialogue.action.SetListAction;
 import io.github.drakonkinst.contextualdialogue.action.SetStaticAction;
-import io.github.drakonkinst.contextualdialogue.commonutil.JsonUtils;
+import io.github.drakonkinst.commonutil.JsonUtils;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.context.FactType;
 import io.github.drakonkinst.contextualdialogue.util.StringCache;

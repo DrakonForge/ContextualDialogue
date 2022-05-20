@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.exception.SymbolException;

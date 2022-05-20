@@ -1,7 +1,7 @@
 package io.github.drakonkinst.contextualdialogue.rule;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.FastMath;
+import io.github.drakonkinst.commonutil.MyLogger;
 
 public class CriterionFail implements Criterion {
     private final float chanceToFail;

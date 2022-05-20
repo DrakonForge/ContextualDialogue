@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.speech;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.json.SpeechbankParser;
 
 import java.io.Serializable;
@@ -52,6 +52,10 @@ public class SpeechbankDatabase implements Serializable {
             return generateLine(parent, category, speechQuery);
         }
         return generatedLine;
+    }
+
+    public Speechbank getSpeechbank(String groupName) {
+        return groupToSpeechbankMap.get(groupName);
     }
 
 

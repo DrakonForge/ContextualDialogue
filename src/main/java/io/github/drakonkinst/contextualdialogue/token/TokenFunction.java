@@ -1,6 +1,5 @@
 package io.github.drakonkinst.contextualdialogue.token;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.FactType;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.function.FunctionSig;
@@ -12,7 +11,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 public class TokenFunction implements Token {

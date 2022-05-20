@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.context;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.util.StringCache;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;

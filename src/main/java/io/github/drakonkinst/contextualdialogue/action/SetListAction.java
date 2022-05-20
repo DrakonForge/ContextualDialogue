@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.action;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.context.FactType;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;

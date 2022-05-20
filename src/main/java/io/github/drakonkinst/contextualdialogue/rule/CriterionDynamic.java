@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.rule;
 
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
 
@@ -86,7 +86,7 @@ public class CriterionDynamic implements Criterion {
         }
 
         float value1 = matching.get(key);
-        float value2 = otherMatching.get(key);
+        float value2 = otherMatching.get(otherKey);
         boolean passed = compare(value1, value2);
 
         if(passed) {

@@ -1,12 +1,11 @@
 package io.github.drakonkinst.contextualdialogue.speech;
 
 import io.github.drakonkinst.contextualdialogue.action.Action;
-import io.github.drakonkinst.contextualdialogue.commonutil.FastMath;
-import io.github.drakonkinst.contextualdialogue.commonutil.MyLogger;
+import io.github.drakonkinst.commonutil.FastMath;
+import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.rule.Rule;
-import io.github.drakonkinst.contextualdialogue.token.Token;
 import io.github.drakonkinst.contextualdialogue.token.TokenGroup;
 
 import java.io.Serializable;
