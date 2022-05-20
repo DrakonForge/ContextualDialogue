@@ -12,27 +12,29 @@ import io.github.drakonkinst.contextualdialogue.token.TokenTypes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class SymbolChecker {
     private SymbolChecker() {}
 
-    // Todo: Replace this
-    public static final FunctionLookup functionLookup = new FunctionLookup();
-
-    public static void test(Token token, Map<String, Token> symbols) throws SymbolException {
+    public static void test(Token token,
+                            Map<String, Token> symbols,
+                            FunctionLookup functionLookup) throws SymbolException {
         fillSymbols(token, symbols);
-        check(token, symbols);
+        check(token, symbols, functionLookup);
         // TODO: have a fillFunction that fills in all tokens with their proper function
         // TODO: Implement caching for certain tokens
     }
     
-    private static void check(Token token, Map<String, Token> symbols) throws SymbolException {     
+    private static void check(Token token,
+                              Map<String, Token> symbols,
+                              FunctionLookup functionLookup) throws SymbolException {
         if(token instanceof TokenList list) {
-            checkListTypes(list, symbols);
+            checkListTypes(list, symbols, functionLookup);
         } else if(token instanceof TokenGroup tokenGroup) {
             List<Token> tokens = tokenGroup.getTokens();
             for(Token t : tokens) {
-                check(t, symbols);
+                check(t, symbols, functionLookup);
             }
         } else if(token instanceof TokenSymbol symbol) {
             // Must be a predefined symbol if it is not replaced
@@ -54,7 +56,7 @@ public class SymbolChecker {
                     int argIndex = Math.min(argTypes.size() - 1, i);
                     TokenTypes expectedType = argTypes.get(argIndex);
                     
-                    if(!expectedType.matchesType(inferType(argToken, symbols))) {
+                    if(!expectedType.matchesType(inferType(argToken, symbols, functionLookup))) {
                         throw new SymbolException("Type mismatch for argument " + (i + 1) + " of call to function \"" + function.getName() + "\", expected " + expectedType);
                     }
                 } 
@@ -91,10 +93,12 @@ public class SymbolChecker {
         }
     }
 
-    private static void checkListTypes(TokenList list, Map<String, Token> symbols) throws SymbolException {
+    private static void checkListTypes(TokenList list,
+                                       Map<String, Token> symbols,
+                                       FunctionLookup functionLookup) throws SymbolException {
         List<Token> tokens = list.getTokens();
         for (Token token : tokens) {
-            Class<? extends Token> tokenClass = inferType(token, symbols);
+            Class<? extends Token> tokenClass = inferType(token, symbols, functionLookup);
             if (!TokenTypes.LIST_ITEM.matchesType(tokenClass)) {
                 throw new SymbolException("Non-argument lists can only contain strings or integers");
             }
@@ -102,10 +106,12 @@ public class SymbolChecker {
     }
 
     // Assumes symbol or function exists
-    private static Class<? extends Token> inferType(Token token, Map<String, Token> symbols) throws SymbolException {
+    private static Class<? extends Token> inferType(Token token,
+                                                    Map<String, Token> symbols,
+                                                    FunctionLookup functionLookup) throws SymbolException {
         if (token instanceof TokenSymbol symbol) {
             Token symbolValue = symbols.get(symbol.getName());
-            return inferType(symbolValue, symbols);
+            return inferType(symbolValue, symbols, functionLookup);
         } else if (token instanceof TokenFunction function) {
             return functionLookup.getFunctionSig(function.getName()).getReturnType();
         }

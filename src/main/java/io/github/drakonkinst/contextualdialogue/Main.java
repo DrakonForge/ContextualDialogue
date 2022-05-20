@@ -3,6 +3,7 @@ package io.github.drakonkinst.contextualdialogue;
 import io.github.drakonkinst.commonutil.JsonUtils;
 import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.context.ContextTable;
+import io.github.drakonkinst.contextualdialogue.function.FunctionLookup;
 import io.github.drakonkinst.contextualdialogue.json.ContextParser;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechResult;
@@ -17,6 +18,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class Main {
+    private static final FunctionLookup functionLookup = new FunctionLookup();
+
     public static void main(String[] args) {
         if(args.length < 7) {
             MyLogger.initialize(Level.SEVERE);
@@ -42,7 +45,7 @@ public class Main {
         }
 
         long start = System.currentTimeMillis();
-        SpeechbankDatabase.loadDatabase(speechbankDir, false);
+        SpeechbankDatabase.loadDatabase(speechbankDir, false, functionLookup);
         long end = System.currentTimeMillis();
         MyLogger.info("Took " + (end - start) + "ms to load speechbanks");
 
@@ -64,7 +67,7 @@ public class Main {
         Set<String> generated = new HashSet<>();
         int numRepeats = 0;
         for(int i = 0; i < howMany; ++i) {
-            SpeechQuery query = new SpeechQuery(contexts, SymbolChecker.functionLookup);
+            SpeechQuery query = new SpeechQuery(contexts);
             SpeechResult result = database.generateLine(group, category, query);
 
             if(printLines) {

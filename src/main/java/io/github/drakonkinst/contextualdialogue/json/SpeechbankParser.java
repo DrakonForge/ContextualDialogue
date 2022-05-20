@@ -12,6 +12,7 @@ import io.github.drakonkinst.commonutil.JsonUtils;
 import io.github.drakonkinst.commonutil.MyLogger;
 import io.github.drakonkinst.contextualdialogue.exception.SymbolException;
 import io.github.drakonkinst.contextualdialogue.exception.TokenizeException;
+import io.github.drakonkinst.contextualdialogue.function.FunctionLookup;
 import io.github.drakonkinst.contextualdialogue.rule.CriterionTuple;
 import io.github.drakonkinst.contextualdialogue.rule.Rule;
 import io.github.drakonkinst.contextualdialogue.speech.Speechbank;
@@ -46,7 +47,7 @@ public final class SpeechbankParser {
     private record NamedEntry(String category, String name, SpeechbankEntry entry) {}
 
     // Load entire speech database
-    public static Map<String, Speechbank> loadDatabase(String speechbankPath, boolean isInternalFile) {
+    public static Map<String, Speechbank> loadDatabase(String speechbankPath, boolean isInternalFile, FunctionLookup functionLookup) {
         Map<String, Result> results = new HashMap<>();
         Queue<QueueItem> loadQueue = new ArrayDeque<>();
 
@@ -54,10 +55,10 @@ public final class SpeechbankParser {
         readPresetFile(speechbankPath, isInternalFile, results, loadQueue);
 
         // Read all other speechbanks
-        readSpeechbanksInDirectory(speechbankPath, isInternalFile, results, loadQueue);
+        readSpeechbanksInDirectory(speechbankPath, isInternalFile, results, loadQueue, functionLookup);
 
         // Resolve speechbank dependencies
-        resolveLoadQueue(loadQueue, results);
+        resolveLoadQueue(loadQueue, results, functionLookup);
 
         return extractSpeechbanks(results);
     }
@@ -66,7 +67,7 @@ public final class SpeechbankParser {
                                        boolean isInternalFile,
                                        Map<String, Result> results,
                                        Queue<QueueItem> loadQueue) {
-        readSpeechbankFile(speechbankPath, PRESET_FILE, isInternalFile, results, loadQueue);
+        readSpeechbankFile(speechbankPath, PRESET_FILE, isInternalFile, results, loadQueue, new FunctionLookup());
         if(!results.containsKey(PRESET_NAME)) {
             MyLogger.warning("Warning: Speechbank preset.json should be included in the root folder");
             results.put(PRESET_NAME, NULL_RESULT);
@@ -76,7 +77,8 @@ public final class SpeechbankParser {
     private static void readSpeechbanksInDirectory(String speechbankPath,
                                                    boolean isInternalFile,
                                                    Map<String, Result> results,
-                                                   Queue<QueueItem> loadQueue) {
+                                                   Queue<QueueItem> loadQueue,
+                                                   FunctionLookup functionLookup) {
         // Read directory
         DirectoryStream<Path> speechbankFiles;
         if(isInternalFile) {
@@ -105,11 +107,11 @@ public final class SpeechbankParser {
 
             if(Files.isDirectory(speechbankFile)) {
                 // Read nested directory
-                readSpeechbanksInDirectory(Paths.get(speechbankPath, fileName).toString(), isInternalFile, results, loadQueue);
+                readSpeechbanksInDirectory(Paths.get(speechbankPath, fileName).toString(), isInternalFile, results, loadQueue, functionLookup);
             } else if(fileName.endsWith((JsonUtils.JSON_EXTENSION))) {
                 // Read speechbank
                 MyLogger.finer("Parsing " + fileName + " from " + speechbankPath);
-                readSpeechbankFile(speechbankPath, fileName, isInternalFile, results, loadQueue);
+                readSpeechbankFile(speechbankPath, fileName, isInternalFile, results, loadQueue, functionLookup);
             }
         }
     }
@@ -118,7 +120,8 @@ public final class SpeechbankParser {
                                            String fileName,
                                            boolean isInternalFile,
                                            Map<String, Result> results,
-                                           Queue<QueueItem> loadQueue) {
+                                           Queue<QueueItem> loadQueue,
+                                           FunctionLookup functionLookup) {
         String groupName = JsonUtils.removeExtension(fileName);
         if(results.containsKey(groupName)) {
             MyLogger.severe("Error: Duplicate speechbank found for group \"" + groupName + "\", skipping");
@@ -157,10 +160,12 @@ public final class SpeechbankParser {
         }
 
         // Add speechbank to map
-        attemptParseSpeechbank(groupName, speechbankObj, parentResult, results);
+        attemptParseSpeechbank(groupName, speechbankObj, parentResult, results, functionLookup);
     }
 
-    private static void resolveLoadQueue(Queue<QueueItem> loadQueue, Map<String, Result> results) {
+    private static void resolveLoadQueue(Queue<QueueItem> loadQueue,
+                                         Map<String, Result> results,
+                                         FunctionLookup functionLookup) {
         int checkAfter = loadQueue.size();
         boolean queueChanged = false;
 
@@ -170,7 +175,7 @@ public final class SpeechbankParser {
 
             if(parentResult != null) {
                 // Parent is now loaded, proceed with parsing speechbank
-                attemptParseSpeechbank(item.groupName(), item.object(), parentResult, results);
+                attemptParseSpeechbank(item.groupName(), item.object(), parentResult, results, functionLookup);
                 queueChanged = true;
             } else {
                 // Parent still not loaded, add to queue
@@ -207,10 +212,14 @@ public final class SpeechbankParser {
         return speechbankMap;
     }
 
-    private static void attemptParseSpeechbank(String groupName, JsonObject speechbankObj, Result parentResult, Map<String, Result> results) {
+    private static void attemptParseSpeechbank(String groupName,
+                                               JsonObject speechbankObj,
+                                               Result parentResult,
+                                               Map<String, Result> results,
+                                               FunctionLookup functionLookup) {
         Result result;
         try {
-            result = parseSpeechbank(speechbankObj, parentResult);
+            result = parseSpeechbank(speechbankObj, parentResult, functionLookup);
         } catch(Exception e) {
             MyLogger.severe("Error: Unable to parse speechbank for " + groupName, e);
             return;
@@ -219,7 +228,7 @@ public final class SpeechbankParser {
         results.put(groupName, result);
     }
 
-    private static Result parseSpeechbank(JsonObject obj, Result parent) {
+    private static Result parseSpeechbank(JsonObject obj, Result parent, FunctionLookup functionLookup) {
         // Read parent
         String parentName = null;
         JsonElement parentElement = obj.get("parent");
@@ -247,7 +256,7 @@ public final class SpeechbankParser {
                 String categoryName = entry.getKey();
                 JsonArray speechEntriesArr = entry.getValue().getAsJsonArray();
                 SpeechbankEntry[] speechEntries =
-                        parseSpeechEntries(categoryName, speechEntriesArr, symbols, namedEntries);
+                        parseSpeechEntries(categoryName, speechEntriesArr, symbols, namedEntries, functionLookup);
                 categoryToSpeechMap.put(categoryName, speechEntries);
             }
         }
@@ -282,10 +291,11 @@ public final class SpeechbankParser {
     private static SpeechbankEntry[] parseSpeechEntries(String categoryName,
                                                         JsonArray arr,
                                                         Map<String, Token> symbols,
-                                                        List<NamedEntry> namedEntries) {
+                                                        List<NamedEntry> namedEntries,
+                                                        FunctionLookup functionLookup) {
         SpeechbankEntry[] speechEntries = new SpeechbankEntry[arr.size()];
         for(int i = 0; i < arr.size(); ++i) {
-            speechEntries[i] = parseSpeechEntry(categoryName, arr.get(i).getAsJsonObject(), symbols, namedEntries);
+            speechEntries[i] = parseSpeechEntry(categoryName, arr.get(i).getAsJsonObject(), symbols, namedEntries, functionLookup);
         }
         return speechEntries;
     }
@@ -293,7 +303,8 @@ public final class SpeechbankParser {
     private static SpeechbankEntry parseSpeechEntry(String categoryName,
                                                     JsonObject obj,
                                                     Map<String, Token> parentSymbols,
-                                                    List<NamedEntry> namedEntries) {
+                                                    List<NamedEntry> namedEntries,
+                                                    FunctionLookup functionLookup) {
         boolean empty = true;
 
         // Read symbols
@@ -315,7 +326,7 @@ public final class SpeechbankParser {
         Rule rule = CriteriaParser.parseRule(criteriaArr, presetRules);
 
         // Read lines
-        TokenGroup[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries);
+        TokenGroup[] speechLines = checkSpeechLinesType(obj.get("lines"), symbols, namedEntries, functionLookup);
         if(speechLines != null && speechLines.length > 0) {
             empty = false;
         }
@@ -356,8 +367,9 @@ public final class SpeechbankParser {
     }
 
     private static TokenGroup[] checkSpeechLinesType(JsonElement linesEl,
-                                                Map<String, Token> symbols,
-                                                List<NamedEntry> namedEntries) {
+                                                     Map<String, Token> symbols,
+                                                     List<NamedEntry> namedEntries,
+                                                     FunctionLookup functionLookup) {
         if(linesEl != null) {
             if(linesEl.isJsonObject()) {
                 // Preset
@@ -375,7 +387,7 @@ public final class SpeechbankParser {
             } else if(linesEl.isJsonArray()) {
                 // Normal lines
                 JsonArray linesArr = linesEl.getAsJsonArray();
-                return parseSpeechLines(linesArr, symbols);
+                return parseSpeechLines(linesArr, symbols, functionLookup);
             } else {
                 throw new JsonParseException("Lines must be a preset definition or array");
             }
@@ -383,13 +395,15 @@ public final class SpeechbankParser {
         return null;
     }
 
-    private static TokenGroup[] parseSpeechLines(JsonArray arr, Map<String, Token> symbols) {
+    private static TokenGroup[] parseSpeechLines(JsonArray arr,
+                                                 Map<String, Token> symbols,
+                                                 FunctionLookup functionLookup) {
         TokenGroup[] tokens = new TokenGroup[arr.size()];
         for(int i = 0; i < arr.size(); ++i) {
             String speechLine = arr.get(i).getAsString();
             try {
                 TokenGroup token = Tokenizer.tokenize(speechLine);
-                SymbolChecker.test(token, symbols);
+                SymbolChecker.test(token, symbols, functionLookup);
                 MyLogger.finest("Tokenization:" + token);
                 tokens[i] = token;
             } catch(TokenizeException e) {

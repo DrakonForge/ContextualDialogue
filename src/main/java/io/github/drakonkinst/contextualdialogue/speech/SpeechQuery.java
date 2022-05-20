@@ -86,6 +86,11 @@ public class SpeechQuery {
     private final List<String> prevChoices = new ArrayList<>();
     private final IntList prevChosenIndices = new IntArrayList();
 
+    public SpeechQuery(Map<String, ContextTable> contexts) {
+        this.contexts = contexts;
+        this.functionLookup = SpeechbankDatabase.getInstance().getFunctionLookup();
+    }
+
     public SpeechQuery(Map<String, ContextTable> contexts, FunctionLookup functionLookup) {
         this.contexts = contexts;
         this.functionLookup = functionLookup;

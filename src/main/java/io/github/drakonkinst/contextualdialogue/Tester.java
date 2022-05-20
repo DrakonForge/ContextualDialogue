@@ -5,6 +5,7 @@ import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.exception.SymbolException;
 import io.github.drakonkinst.contextualdialogue.exception.TokenizeException;
+import io.github.drakonkinst.contextualdialogue.function.FunctionLookup;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
 import io.github.drakonkinst.contextualdialogue.token.Token;
 import io.github.drakonkinst.contextualdialogue.token.TokenContext;
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class Tester {
+    private static final FunctionLookup functionLookup = new FunctionLookup();
+
     public static void main(String[] args) throws TokenizeException, SymbolException, SpeechException {
         MyLogger.initialize(Level.FINE);
 
@@ -89,7 +92,7 @@ public class Tester {
         long start = System.currentTimeMillis();
         for(int i = 0; i < count; ++i) {
             Token token = Tokenizer.tokenize(str);
-            SymbolChecker.test(token, symbols);
+            SymbolChecker.test(token, symbols, functionLookup);
         }
         long end = System.currentTimeMillis();
 
@@ -99,9 +102,9 @@ public class Tester {
     private static void testGenerateLarge(String str, int count) throws TokenizeException, SymbolException {
         Map<String, Token> symbols = getTestSymbols();
         Map<String, ContextTable> contexts = getTestContexts();
-        SpeechQuery query = new SpeechQuery(contexts, SymbolChecker.functionLookup);
+        SpeechQuery query = new SpeechQuery(contexts, functionLookup);
         Token token = Tokenizer.tokenize(str);
-        SymbolChecker.test(token, symbols);
+        SymbolChecker.test(token, symbols, functionLookup);
 
         long start = System.currentTimeMillis();
         for(int i = 0; i < count; ++i) {
@@ -119,14 +122,14 @@ public class Tester {
     private static void testLine(String str) throws TokenizeException, SymbolException {
         Map<String, Token> symbols = getTestSymbols();
         Map<String, ContextTable> contexts = getTestContexts();
-        SpeechQuery query = new SpeechQuery(contexts, SymbolChecker.functionLookup);
+        SpeechQuery query = new SpeechQuery(contexts, functionLookup);
 
         MyLogger.info(String.format("%16s: %s", "Original string", '"' + str + '"'));
 
         Token token = Tokenizer.tokenize(str);
         MyLogger.info(String.format("%16s: %s", "Tokenization", token));
 
-        SymbolChecker.test(token, symbols);
+        SymbolChecker.test(token, symbols, functionLookup);
         MyLogger.info(String.format("%16s: %s", "Symbol Filling", token));
 
         try {
