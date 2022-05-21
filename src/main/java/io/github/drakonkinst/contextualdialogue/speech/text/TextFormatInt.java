@@ -1,6 +1,6 @@
 package io.github.drakonkinst.contextualdialogue.speech.text;
 
-public class TextFormatInt extends TextFormat {
+public class TextFormatInt extends TextFormat implements TextFormatNumber {
     private final int value;
 
     public TextFormatInt(String attribute, int value) {
@@ -15,5 +15,10 @@ public class TextFormatInt extends TextFormat {
     @Override
     public String toString() {
         return '{' + attribute + '=' + value + '}';
+    }
+
+    @Override
+    public float getFloatValue() {
+        return value;
     }
 }
