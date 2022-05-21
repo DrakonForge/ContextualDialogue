@@ -29,7 +29,7 @@ public final class NumericalSpeech {
     private static final int VAL_MILLION = 1000000;
     private static final int VAL_BILLION = 1000000000;
 
-    private static Map<String,String> ORDINAL_MAP = new HashMap<>();
+    private static final Map<String,String> ORDINAL_MAP = new HashMap<>();
     static {
         ORDINAL_MAP.put("one", "first");
         ORDINAL_MAP.put("two", "second");
@@ -56,8 +56,12 @@ public final class NumericalSpeech {
 
     // https://rosettacode.org/wiki/Spelling_of_ordinal_numbers
     public static String integerToOrdinal(int num) throws SpeechException {
-        String spelling = integerToWord(num);
-        String[] split = spelling.split(" ");
+        String numWord = integerToWord(num);
+        return integerWordToOrdinal(numWord);
+    }
+
+    public static String integerWordToOrdinal(String numWord) {
+        String[] split = numWord.split(" ");
         String last = split[split.length - 1];
         String replace = "";
         if(last.contains("-") ) {

@@ -8,7 +8,7 @@ import io.github.drakonkinst.contextualdialogue.token.TokenInt;
 import io.github.drakonkinst.contextualdialogue.token.TokenList;
 import io.github.drakonkinst.contextualdialogue.token.TokenString;
 import io.github.drakonkinst.contextualdialogue.token.TokenTypes;
-import io.github.drakonkinst.contextualdialogue.util.StringUtils;
+import io.github.drakonkinst.commonutil.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

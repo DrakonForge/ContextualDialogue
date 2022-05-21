@@ -4,10 +4,9 @@ import io.github.drakonkinst.contextualdialogue.context.FactType;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.function.FunctionSig;
 import io.github.drakonkinst.contextualdialogue.speech.SpeechQuery;
-import io.github.drakonkinst.contextualdialogue.speech.SpeechbankDatabase;
 import io.github.drakonkinst.contextualdialogue.util.NumericalSpeech;
 import io.github.drakonkinst.contextualdialogue.util.StringCache;
-import io.github.drakonkinst.contextualdialogue.util.StringUtils;
+import io.github.drakonkinst.commonutil.StringUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
