@@ -102,6 +102,10 @@ public class Speechbank implements Serializable {
         return categoryToEntryMap.get(category);
     }
 
+    public Map<String, SpeechbankEntry[]> getEntries() {
+        return categoryToEntryMap;
+    }
+
     public String getParent() {
         return parent;
     }

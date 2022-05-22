@@ -62,9 +62,12 @@ public class ContextTable implements Serializable {
     }
 
     private final Map<String, FactTuple> dictionary = new HashMap<>();
-    private Map<String, IntSet> lists = null;
+    private final int cacheId;
+    private Map<String, IntSet> lists = null; // Null to allow for lazy instantiation
 
-    // Gets value as float, no matter what data type is stored
+    public ContextTable() {
+        cacheId = StringCache.getCacheId();
+    }
 
     /**
      * Returns the value stored in this key as a raw float,
@@ -263,6 +266,10 @@ public class ContextTable implements Serializable {
         }
         dictionary.remove(key);
         return this;
+    }
+
+    public boolean isOutdated() {
+        return cacheId != StringCache.getCacheId();
     }
 
     @Override

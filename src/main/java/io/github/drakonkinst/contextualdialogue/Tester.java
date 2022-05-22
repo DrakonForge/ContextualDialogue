@@ -44,7 +44,7 @@ public class Tester {
         testLine("@upper(hi\\, how are you)");
         testLine("This must be the @ord(3) time we've met!");
 
-        /*
+        ///*
         int howManyTokenize = 100000;
         testTokenizeLarge(complex1, howManyTokenize);
         testTokenizeLarge(complex2, howManyTokenize);

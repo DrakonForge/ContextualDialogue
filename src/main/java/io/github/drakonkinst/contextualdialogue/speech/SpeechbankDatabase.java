@@ -1,6 +1,7 @@
 package io.github.drakonkinst.contextualdialogue.speech;
 
 import io.github.drakonkinst.commonutil.MyLogger;
+import io.github.drakonkinst.contextualdialogue.context.ContextTable;
 import io.github.drakonkinst.contextualdialogue.exception.SpeechException;
 import io.github.drakonkinst.contextualdialogue.function.FunctionLookup;
 import io.github.drakonkinst.contextualdialogue.function.FunctionSig;
@@ -35,6 +36,7 @@ public class SpeechbankDatabase implements Serializable {
     }
 
     public SpeechResult generateLine(String group, String category, SpeechQuery speechQuery) {
+        validateContextTables(speechQuery.getContexts());
         Speechbank speechbank = groupToSpeechbankMap.get(group);
         if(speechbank == null) {
             MyLogger.severe("Speechbank for group \"" + group + "\" does not exist!");
@@ -59,6 +61,14 @@ public class SpeechbankDatabase implements Serializable {
         return generatedLine;
     }
 
+    public void validateContextTables(Map<String, ContextTable> contextTables) {
+        for(Map.Entry<String, ContextTable> entry : contextTables.entrySet()) {
+            if(entry.getValue().isOutdated()) {
+                MyLogger.warning("Context table for key " + entry.getKey() + " is outdated and should be regenerated:\n" + entry.getValue().toString());
+            }
+        }
+    }
+
     public FunctionLookup getFunctionLookup() {
         return functionLookup;
     }
@@ -67,5 +77,7 @@ public class SpeechbankDatabase implements Serializable {
         return groupToSpeechbankMap.get(groupName);
     }
 
-
+    public Map<String, Speechbank> getSpeechbanks() {
+        return groupToSpeechbankMap;
+    }
 }

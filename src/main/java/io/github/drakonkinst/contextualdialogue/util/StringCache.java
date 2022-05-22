@@ -14,7 +14,8 @@ public final class StringCache {
 
     private static final Object2IntMap<String> CACHE = new Object2IntOpenHashMap<>();
     private static final Int2ObjectMap<String> LOOKUP = new Int2ObjectOpenHashMap<>();
-    private static int id = INITIAL_ID - 1;
+    private static int nextId = INITIAL_ID - 1;
+    private static int cacheId = 0;
 
     private StringCache() {}
 
@@ -25,9 +26,9 @@ public final class StringCache {
         if(CACHE.containsKey(str)) {
             return CACHE.getInt(str);
         }
-        CACHE.put(str, ++id);
-        LOOKUP.put(id, str);
-        return id;
+        CACHE.put(str, ++nextId);
+        LOOKUP.put(nextId, str);
+        return nextId;
     }
 
     public static String lookup(final int id) {
@@ -42,9 +43,14 @@ public final class StringCache {
     public static void resetCache() {
         CACHE.clear();
         LOOKUP.clear();
+        ++cacheId;
     }
 
     public static int getSize() {
         return CACHE.size();
+    }
+
+    public static int getCacheId() {
+        return cacheId;
     }
 }
