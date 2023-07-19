@@ -39,7 +39,7 @@ public final class SpeechbankParser {
 
     private static final Result NULL_RESULT =
             new Result(null, Collections.emptyList(), Collections.emptyMap());
-    private static final String PRESET_NAME = "preset";
+    private static final String PRESET_NAME = "Preset";
     private static final String PRESET_FILE = PRESET_NAME + ".json";
 
     private record Result(Speechbank speechbank, List<NamedEntry> namedEntries, Map<String, Token> symbols) {}
@@ -52,7 +52,7 @@ public final class SpeechbankParser {
         Queue<QueueItem> loadQueue = new ArrayDeque<>();
 
         // Read preset file first in the root folder
-        readPresetFile(speechbankPath, isInternalFile, results, loadQueue);
+        readPresetFile(speechbankPath, isInternalFile, results, loadQueue, functionLookup);
 
         // Read all other speechbanks
         readSpeechbanksInDirectory(speechbankPath, isInternalFile, results, loadQueue, functionLookup);
@@ -66,10 +66,11 @@ public final class SpeechbankParser {
     private static void readPresetFile(String speechbankPath,
                                        boolean isInternalFile,
                                        Map<String, Result> results,
-                                       Queue<QueueItem> loadQueue) {
-        readSpeechbankFile(speechbankPath, PRESET_FILE, isInternalFile, results, loadQueue, new FunctionLookup());
+                                       Queue<QueueItem> loadQueue,
+                                       FunctionLookup functionLookup) {
+        readSpeechbankFile(speechbankPath, PRESET_FILE, isInternalFile, results, loadQueue, functionLookup);
         if(!results.containsKey(PRESET_NAME)) {
-            MyLogger.warning("Warning: Speechbank preset.json should be included in the root folder");
+            MyLogger.warning("Warning: Speechbank " + PRESET_FILE + " should be included in the root folder");
             results.put(PRESET_NAME, NULL_RESULT);
         }
     }
@@ -283,6 +284,7 @@ public final class SpeechbankParser {
                 throw new JsonParseException("Symbol \"" + symbolName + "\" is already defined");
             }
             Token tokenValue = TokenParser.parseToken(obj.get("exp"));
+            MyLogger.fine("Defining symbol \"" + symbolName + "\" as " + tokenValue);
             symbols.put(symbolName, tokenValue);
         }
         return symbols;
